@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { TextInput, Button, Card } from "react-native-paper";
 import axios from "axios"; // Thêm axios để gửi yêu cầu HTTP
 
-const API_URL = "http://192.168.0.210:5000/login"; // Địa chỉ API của bạn (thay bằng địa chỉ IP nếu trên thiết bị thực)
+const API_URL = "http://192.168.0.210:5000/login"; 
 
 export default function LoginScreen({ navigation }) {
     const [username, setUsername] = useState("");

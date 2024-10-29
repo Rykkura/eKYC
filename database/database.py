@@ -22,11 +22,14 @@ def register():
     data = request.json
     username = data.get('username')
     password = data.get('password')
+    fullname = data.get('fullname')
+    phone_number = data.get('phone_number')
+    email = data.get('email')
 
     try:
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute('INSERT INTO users (username, password) VALUES (%s, %s) RETURNING *', (username, password))
+        cur.execute('INSERT INTO users (username, password, email, fullname, phone_number) VALUES (%s, %s, %s, %s, %s) RETURNING *', (username, password, email, fullname, phone_number))
         user = cur.fetchone()
         conn.commit()
         cur.close()

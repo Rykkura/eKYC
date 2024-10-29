@@ -9,12 +9,18 @@ const API_URL = "http://192.168.0.210:5000/register"; // Cập nhật địa ch�
 export default function RegisterScreen({ navigation }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [fullname, setFullName] = useState(""); // Trường họ và tên
+    const [phone_number, setPhoneNumber] = useState(""); // Trường số điện thoại
+    const [email, setEmail] = useState(""); // Trường email
 
     const register = async () => {
         try {
             const response = await axios.post(API_URL, {
                 username,
                 password,
+                fullname,
+                phone_number,
+                email,
             });
             alert(response.data.message || "Đăng ký thành công");
             navigation.navigate("Login");
@@ -29,6 +35,26 @@ export default function RegisterScreen({ navigation }) {
             <Card style={styles.card}>
                 <Card.Title title="Đăng ký" />
                 <Card.Content>
+                    <TextInput
+                        label="Họ và tên"
+                        value={fullname}
+                        onChangeText={setFullName}
+                        style={styles.input}
+                    />
+                    <TextInput
+                        label="Số điện thoại"
+                        value={phone_number}
+                        onChangeText={setPhoneNumber}
+                        keyboardType="phone-pad"
+                        style={styles.input}
+                    />
+                    <TextInput
+                        label="Email"
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                        style={styles.input}
+                    />
                     <TextInput
                         label="Tên đăng nhập"
                         value={username}
