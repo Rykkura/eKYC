@@ -7,3 +7,6 @@ npm install react-native-paper
 
 sudo apt install postgresql postgresql-contrib
 npm install axios
+expo install expo-permissions
+expo install expo-camera
+

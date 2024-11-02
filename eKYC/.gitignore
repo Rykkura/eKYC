@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+IMG_9611.jpg
+temp_face_image.jpg
+temp_webcam_image.jpg
+det_EAST
+rec_SRN
+inference_results
+1.jpg
+model_landmarks
+Modelos
+model_data
+datasets/
+det_r50_vd_east_v2.0_train/

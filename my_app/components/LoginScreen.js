@@ -1,10 +1,9 @@
-// components/LoginScreen.js
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { TextInput, Button, Card } from "react-native-paper";
-import axios from "axios"; // Thêm axios để gửi yêu cầu HTTP
+import axios from "axios";
 
-const API_URL = "http://192.168.0.210:5000/login"; 
+const API_URL = "http://192.168.0.103:8000/login";
 
 export default function LoginScreen({ navigation }) {
     const [username, setUsername] = useState("");
@@ -17,13 +16,10 @@ export default function LoginScreen({ navigation }) {
                 password,
             });
 
-            // Nếu không cần token, bạn có thể bỏ qua dòng này
-            // const { token } = response.data;
-
-            // Điều hướng đến màn hình chuyển tiền
-            navigation.navigate("Transfer");
+            // Điều hướng đến màn hình kiểm tra liveness sau khi đăng nhập thành công
+            navigation.navigate("Liveness");
         } catch (error) {
-            alert(error.response?.data?.message || "Lỗi hệ thống"); // Hiển thị thông báo lỗi
+            alert(error.response?.data?.message || "Lỗi hệ thống");
         }
     };
 
@@ -57,6 +53,13 @@ export default function LoginScreen({ navigation }) {
                         style={styles.button}
                     >
                         Đăng ký
+                    </Button>
+                    <Button
+                        mode="outlined"
+                        onPress={() => navigation.navigate("Liveness")}
+                        style={styles.button}
+                    >
+                        Kiểm tra Liveness
                     </Button>
                 </Card.Content>
             </Card>
