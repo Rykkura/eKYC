@@ -1,5 +1,7 @@
 from PIL import Image
+# from FaceNet.facenet import Facenet
 from FaceNet.facenet import Facenet
+# from facenet import Facenet
 
 def compare_images(image_path_1, image_path_2):
     model = Facenet()

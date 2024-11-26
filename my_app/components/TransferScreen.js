@@ -31,9 +31,13 @@ export default function TransferScreen({ navigation }) {
 
     const transfer = () => {
         if (accountNumber && bank && recipientName && amount) {
-            alert(
-                `Chuyển thành công ${amount} đến ${recipientName} tại ${bank}`
-            );
+            if (parseFloat(amount) >= 10000000) {
+                navigation.navigate("Liveness");
+            } else {
+                alert(
+                    `Chuyển thành công ${amount} đến ${recipientName} tại ${bank}`
+                );
+            }
         } else {
             alert("Vui lòng nhập đầy đủ thông tin");
         }

@@ -4,13 +4,13 @@ import { View, StyleSheet } from "react-native";
 import { TextInput, Button, Card } from "react-native-paper";
 import axios from "axios";
 
-const API_URL = "http://192.168.0.103:8000/register"; // Cập nhật địa chỉ của API
+const API_URL = "http://192.168.0.104:8000/register"; // Cập nhật địa chỉ của API
 
 export default function RegisterScreen({ navigation }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [fullname, setFullName] = useState(""); // Trường họ và tên
-    const [phone_number, setPhoneNumber] = useState(""); // Trường số điện thoại
+    const [cccd, setCCCD] = useState("");
     const [email, setEmail] = useState(""); // Trường email
 
     const register = async () => {
@@ -42,9 +42,9 @@ export default function RegisterScreen({ navigation }) {
                         style={styles.input}
                     />
                     <TextInput
-                        label="Số điện thoại"
-                        value={phone_number}
-                        onChangeText={setPhoneNumber}
+                        label="Số CCCD"
+                        value={cccd}
+                        onChangeText={setCCCD}
                         keyboardType="phone-pad"
                         style={styles.input}
                     />

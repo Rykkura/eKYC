@@ -15,3 +15,5 @@ det_r50_vd_east_v2.0_train/
 rec_r50_vd_srn_train/
 output/
 data.zip
+face1.jpg
+face2.jpg

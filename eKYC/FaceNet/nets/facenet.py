@@ -4,7 +4,8 @@ from torch.nn import functional as F
 
 from FaceNet.nets.inception_resnetv1 import InceptionResnetV1
 from FaceNet.nets.mobilenet import MobileNetV1
-
+# from nets.inception_resnetv1 import InceptionResnetV1
+# from nets.mobilenet import MobileNetV1
 
 class mobilenet(nn.Module):
     def __init__(self, pretrained):

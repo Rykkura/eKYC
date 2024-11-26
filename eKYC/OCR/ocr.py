@@ -121,8 +121,8 @@ class Need:
 
 def load_model():
     args = utility.parse_args()
-    args.det_model_dir = os.getenv('DET_MODEL', './det_EAST')
-    args.rec_model_dir = os.getenv('REC_MODEL', './rec_SRN')
+    args.det_model_dir = os.getenv('DET_MODEL', '/home/rykkura/Documents/mobile_app/eKYC/OCR/det_EAST')
+    args.rec_model_dir = os.getenv('REC_MODEL', '/home/rykkura/Documents/mobile_app/eKYC/OCR/rec_SRN')
     logger.info('model={}, {}'.format(args.det_model_dir, args.rec_model_dir))
     args.use_gpu = True
     Need.text_sys = TextSystem(args)
@@ -164,9 +164,9 @@ def ocr(img_array, download_filename=None):
             draw_img[:, :, ::-1])
         logger.debug("The visualized image saved in {}".format(
             os.path.join(Need.draw_img_save_dir, os.path.basename(download_filename))))
-        img_dir = os.path.join(Need.draw_img_save_dir, os.path.basename(download_filename))
+        
     logger.info("The predict total time is {}".format(time.time() - _st))
-    return img_dir
+    return res
 
 
 if __name__ == "__main__":
