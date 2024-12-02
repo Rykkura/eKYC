@@ -121,8 +121,8 @@ class Need:
 
 def load_model():
     args = utility.parse_args()
-    args.det_model_dir = os.getenv('DET_MODEL', '/home/rykkura/Documents/mobile_app/eKYC/OCR/det_EAST')
-    args.rec_model_dir = os.getenv('REC_MODEL', '/home/rykkura/Documents/mobile_app/eKYC/OCR/rec_SRN')
+    args.det_model_dir = os.getenv('DET_MODEL', './OCR/det_EAST')
+    args.rec_model_dir = os.getenv('REC_MODEL', './OCR/rec_SRN')
     logger.info('model={}, {}'.format(args.det_model_dir, args.rec_model_dir))
     args.use_gpu = True
     Need.text_sys = TextSystem(args)

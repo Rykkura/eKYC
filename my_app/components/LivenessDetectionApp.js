@@ -11,7 +11,7 @@ import {
 import * as FileSystem from "expo-file-system";
 import axios from "axios";
 
-const API_URL = " http://192.168.0.104:5000/liveness_detection"; // Địa chỉ API Flask của bạn
+const API_URL = " http://127.0.0.1:5000/liveness_detection"; // Địa chỉ API Flask của bạn
 const questions = ["smile", "turn face right", "turn face left"];
 
 export default function LivenessDetectionApp({ navigation }) {

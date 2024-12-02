@@ -107,7 +107,7 @@ def detect_faces():
         # cv2.imwrite("face2.jpg", face2)
 
         face1 = 'face1.jpg'
-        face2 = '/home/rykkura/Documents/mobile_app/eKYC/FaceNet/img/trung1.JPG'
+        face2 = './FaceNet/img/trung1.JPG'
         if face1 is None or face2 is None:
             return jsonify({"error": "Không tìm thấy khuôn mặt trong một trong hai ảnh"}), 400
         result = compare_images(face1, face2)

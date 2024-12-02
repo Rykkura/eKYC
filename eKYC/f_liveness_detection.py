@@ -32,7 +32,6 @@ def detect_liveness(im,COUNTER=0,TOTAL=0):
         index = np.argmax(areas)
         rectangles = rectangles[index]
         boxes_face = [list(boxes_face[index])]
-
         # -------------------------------------- emotion_detection ---------------------------------------
         '''
         input:

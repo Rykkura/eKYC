@@ -12,13 +12,12 @@ import {
 import * as FileSystem from "expo-file-system";
 import axios from "axios";
 
-const API_URL = "http://192.168.0.104:5000/ocr";
+const API_URL = "https://tall-hornets-sin.loca.lt/ocr";
 
 export default function OCR({ navigation }) {
     const [permission, requestPermission] = useCameraPermissions();
     const [cameraRef, setCameraRef] = useState(null);
     const [waitingForResponse, setWaitingForResponse] = useState(false);
-    
 
     const captureAndSendImage = async () => {
         if (cameraRef) {
@@ -36,7 +35,7 @@ export default function OCR({ navigation }) {
                 });
 
                 const data = response.data;
-                
+
                 // Lấy các giá trị từ API và cập nhật vào các trường tương ứng
                 navigation.navigate("OCRInfo", {
                     cccd: data.CCCD ? data.CCCD[0] : "",
@@ -85,7 +84,6 @@ export default function OCR({ navigation }) {
             >
                 <Text style={styles.buttonText}>Chụp</Text>
             </TouchableOpacity>
-
         </View>
     );
 }

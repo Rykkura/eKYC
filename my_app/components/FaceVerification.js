@@ -11,7 +11,7 @@ import {
 import * as FileSystem from "expo-file-system";
 import axios from "axios";
 
-const API_URL = "http://192.168.0.104:5000/detect_faces"; // Update this to your face recognition API URL
+const API_URL = "https://tall-hornets-sin.loca.lt/detect_faces"; // Update this to your face recognition API URL
 
 export default function FaceVerification({ navigation }) {
     const [facing, setFacing] = useState("front");

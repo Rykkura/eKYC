@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { TextInput, Button, Card } from "react-native-paper";
 import axios from "axios";
 
-const API_URL = "http://192.168.0.104:8000/register"; // Cập nhật địa chỉ của API
+const API_URL = "http://192.168.0.210:8000/register"; // Cập nhật địa chỉ của API
 
 export default function RegisterScreen({ navigation }) {
     const [username, setUsername] = useState("");
