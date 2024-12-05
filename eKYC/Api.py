@@ -1,3 +1,8 @@
+import tensorflow as tf
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import cv2
@@ -10,7 +15,7 @@ import f_liveness_detection
 import questions
 from io import BytesIO
 from PIL import Image
-from mtcnn import MTCNN
+# from mtcnn import MTCNN
 from FaceNet.predict import compare_images
 from OCR.ocr import ocr, load_model
 
@@ -18,7 +23,7 @@ from OCR.ocr import ocr, load_model
 # Khởi tạo Flask app
 app = Flask(__name__)
 CORS(app)
-detector = MTCNN()
+# detector = MTCNN()
 load_model()
 # Các biến toàn cục cho liveness detection
 COUNTER = 0
@@ -55,15 +60,15 @@ def detect_liveness(im, question):
     else:
         return "retry"
 
-def crop_face(image):
-    """Sử dụng MTCNN để phát hiện và cắt khuôn mặt từ ảnh."""
-    detections = detector.detect_faces(image)
-    if len(detections) == 0:
-        return None
+# def crop_face(image):
+#     """Sử dụng MTCNN để phát hiện và cắt khuôn mặt từ ảnh."""
+#     detections = detector.detect_faces(image)
+#     if len(detections) == 0:
+#         return None
     
-    x, y, w, h = detections[0]['box']
-    cropped_face = image[y:y+h, x:x+w]
-    return cropped_face
+#     x, y, w, h = detections[0]['box']
+#     cropped_face = image[y:y+h, x:x+w]
+#     return cropped_face
 
 def base64_to_array(base64_img):
         img = base64.b64decode(base64_img)
@@ -99,7 +104,7 @@ def detect_faces():
         
         img1 = base64_to_array(image_base64)
         # Cắt khuôn mặt
-        face1 = crop_face(img1)
+        # face1 = crop_face(img1)
         face1 = cv2.flip(img1, 1)
 
         cv2.imwrite("face1.jpg", face1)

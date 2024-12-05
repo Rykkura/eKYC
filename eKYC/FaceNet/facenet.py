@@ -13,7 +13,7 @@ from FaceNet.utils.utils import preprocess_input, resize_image, show_config
 class Facenet(object):
     _defaults = {
        
-        "model_path"    : "/home/rykkura/Documents/face_liveness_detection/FaceNet/model_data/facenet_mobilenet.pth",
+        "model_path"    : "./FaceNet/model_data/facenet_mobilenet.pth",
        
         "input_shape"   : [160, 160, 3],
        
@@ -46,13 +46,13 @@ class Facenet(object):
         # print('Loading weights into state dict...')
         device      = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.net    = facenet(backbone=self.backbone, mode="predict").eval()
-        self.net.load_state_dict(torch.load(self.model_path, map_location=device), strict=False)
+        self.net.load_state_dict(torch.load(self.model_path, map_location='cpu'), strict=False)
         # print('{} model loaded.'.format(self.model_path))
 
-        if self.cuda:
-            self.net = torch.nn.DataParallel(self.net)
-            cudnn.benchmark = True
-            self.net = self.net.cuda()
+        # if self.cuda:
+        #     self.net = torch.nn.DataParallel(self.net)
+        #     cudnn.benchmark = True
+        #     self.net = self.net.cuda()
     
    
     def detect_image(self, image_1, image_2):
@@ -64,9 +64,9 @@ class Facenet(object):
             photo_1 = torch.from_numpy(np.expand_dims(np.transpose(preprocess_input(np.array(image_1, np.float32)), (2, 0, 1)), 0))
             photo_2 = torch.from_numpy(np.expand_dims(np.transpose(preprocess_input(np.array(image_2, np.float32)), (2, 0, 1)), 0))
             
-            if self.cuda:
-                photo_1 = photo_1.cuda()
-                photo_2 = photo_2.cuda()
+            # if self.cuda:
+            #     photo_1 = photo_1.cuda()
+            #     photo_2 = photo_2.cuda()
                 
             
             output1 = self.net(photo_1).view(-1).cpu().numpy()
