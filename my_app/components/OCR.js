@@ -9,10 +9,11 @@ import {
     TouchableOpacity,
     TextInput,
 } from "react-native";
+import { manipulateAsync } from "expo-image-manipulator";
 import * as FileSystem from "expo-file-system";
 import axios from "axios";
 
-const API_URL = "https://tall-hornets-sin.loca.lt/ocr";
+const API_URL = "https://0136-213-173-110-202.ngrok-free.app/ocr";
 
 export default function OCR({ navigation }) {
     const [permission, requestPermission] = useCameraPermissions();
@@ -25,6 +26,11 @@ export default function OCR({ navigation }) {
                 setWaitingForResponse(true);
 
                 const photo = await cameraRef.takePictureAsync();
+                // const resizedPhoto = await manipulateAsync(
+                //     photo.uri,
+                //     [{ resize: { width: 300 } }], // Resize chiều rộng về 300px, giữ nguyên tỷ lệ
+                //     { compress: 0.7, format: "jpeg" } // Nén ảnh để giảm dung lượng
+                // );
                 const base64 = await FileSystem.readAsStringAsync(photo.uri, {
                     encoding: FileSystem.EncodingType.Base64,
                 });

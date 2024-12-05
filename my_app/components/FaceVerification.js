@@ -11,7 +11,7 @@ import {
 import * as FileSystem from "expo-file-system";
 import axios from "axios";
 
-const API_URL = "https://tall-hornets-sin.loca.lt/detect_faces"; // Update this to your face recognition API URL
+const API_URL = "https://0136-213-173-110-202.ngrok-free.app/detect_faces"; // Update this to your face recognition API URL
 
 export default function FaceVerification({ navigation }) {
     const [facing, setFacing] = useState("front");
@@ -32,6 +32,11 @@ export default function FaceVerification({ navigation }) {
 
                 // Take photo and convert to base64
                 const photo = await cameraRef.takePictureAsync();
+                // const resizedPhoto = await manipulateAsync(
+                //     photo.uri,
+                //     [{ resize: { width: 300 } }], // Resize chiều rộng về 300px, giữ nguyên tỷ lệ
+                //     { compress: 0.7, format: "jpeg" } // Nén ảnh để giảm dung lượng
+                // );
                 const base64 = await FileSystem.readAsStringAsync(photo.uri, {
                     encoding: FileSystem.EncodingType.Base64,
                 });

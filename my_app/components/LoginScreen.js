@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { TextInput, Button, Card } from "react-native-paper";
 import axios from "axios";
 
-const API_URL = "https://busy-areas-repair.loca.lt/login";
+const API_URL = "http://192.168.0.103:8000/login";
 
 export default function LoginScreen({ navigation }) {
     const [username, setUsername] = useState("");

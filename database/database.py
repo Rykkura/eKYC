@@ -10,7 +10,7 @@ def get_db_connection():
     conn = psycopg2.connect(
         user='postgres',
         host='localhost',
-        database='mobileappdb',
+        database='mobile',
         password='020104',
         port=5432
     )
