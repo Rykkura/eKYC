@@ -13,8 +13,10 @@ import random
 import cv2
 import f_liveness_detection
 import questions
+from mtcnn import MTCNN
 from io import BytesIO
 from PIL import Image
+from flask_socketio import SocketIO, emit
 # from mtcnn import MTCNN
 from FaceNet.predict import compare_images
 from OCR.ocr import ocr, load_model
@@ -22,8 +24,9 @@ from OCR.ocr import ocr, load_model
 
 # Khởi tạo Flask app
 app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins="*")
 CORS(app)
-# detector = MTCNN()
+detector = MTCNN()
 load_model()
 # Các biến toàn cục cho liveness detection
 COUNTER = 0
@@ -60,38 +63,34 @@ def detect_liveness(im, question):
     else:
         return "retry"
 
-# def crop_face(image):
-#     """Sử dụng MTCNN để phát hiện và cắt khuôn mặt từ ảnh."""
-#     detections = detector.detect_faces(image)
-#     if len(detections) == 0:
-#         return None
+def crop_face(image):
+    """Sử dụng MTCNN để phát hiện và cắt khuôn mặt từ ảnh."""
+    detections = detector.detect_faces(image)
+    if len(detections) == 0:
+        return None
     
-#     x, y, w, h = detections[0]['box']
-#     cropped_face = image[y:y+h, x:x+w]
-#     return cropped_face
+    x, y, w, h = detections[0]['box']
+    cropped_face = image[y:y+h, x:x+w]
+    return cropped_face
 
 def base64_to_array(base64_img):
         img = base64.b64decode(base64_img)
         image_data = np.frombuffer(img, np.uint8)
         return cv2.imdecode(image_data, cv2.IMREAD_COLOR)
 # API endpoint để kiểm tra liveness
-@app.route('/liveness_detection', methods=['POST'])
-def liveness_detection():
-    global COUNTER, TOTAL
-    
-    data = request.get_json()
-    if not data or 'image' not in data or 'question' not in data:
-        return jsonify({"error": "Missing image or question"}), 400
-    
-    # Nhận hình ảnh (base64) và câu hỏi từ client
-    question = data['question']
-    image_base64 = data['image']
-    
-    im = base64_to_array(image_base64)
-    
-    result = detect_liveness(im, question)
-    
-    return jsonify({"result": result})
+@app.route('/')
+def index():
+    return "WebSocket server is running!"
+
+# WebSocket event to handle the image upload
+@socketio.on('upload_image')
+def handle_image(data):
+    image_data = data['image']  # Get the base64 image data
+    image = base64.b64decode(image_data)  # Decode the image
+    img = Image.open(BytesIO(image))  # Convert to an image object
+    img.save('uploaded_image.jpg')  # Save the image to a file
+    print("Image uploaded and saved successfully!")
+    emit('response', {'message': 'Image received successfully!'})
 
 @app.route('/detect_faces', methods=['POST'])
 def detect_faces():
@@ -101,18 +100,18 @@ def detect_faces():
         if not data or 'image1' not in data:
             return jsonify({"error": "Missing image or question"}), 400
         image_base64 = data['image1']
-        
         img1 = base64_to_array(image_base64)
-        # Cắt khuôn mặt
-        # face1 = crop_face(img1)
         face1 = cv2.flip(img1, 1)
-
         cv2.imwrite("face1.jpg", face1)
-        # face2 = crop_face(img2)
-        # cv2.imwrite("face2.jpg", face2)
 
+        # Cắt khuôn mặt
+        img_cccd = cv2.imread('cccd.jpg')
+        face_cccd = crop_face(img_cccd)
+        cv2.imwrite("face_cccd.jpg", face_cccd)
+        
+    
         face1 = 'face1.jpg'
-        face2 = './FaceNet/img/trung1.JPG'
+        face2 = 'face_cccd.jpg'
         if face1 is None or face2 is None:
             return jsonify({"error": "Không tìm thấy khuôn mặt trong một trong hai ảnh"}), 400
         result = compare_images(face1, face2)
@@ -129,6 +128,7 @@ def ocr_base64():
     image_base64 = data['image1']
 
     array = base64_to_array(image_base64)
+    cv2.imwrite("cccd.jpg", array)
     
     result = ocr(array)
     transcriptions = [item["transcription"] for item in result]
@@ -146,7 +146,7 @@ def ocr_base64():
     
     # Ngày sinh
     start_index = transcriptions.index("Date") + 3
-    end_index = transcriptions.index("Date") + 4
+    end_index = transcriptions.index("Date") + 4 
     ngay_sinh = transcriptions[start_index:end_index]
     #Que quán
     start_index = transcriptions.index("origin") + 1
@@ -156,5 +156,6 @@ def ocr_base64():
     return jsonify({ "CCCD": CCCD,  "ho_ten": ho_ten, "ngay_sinh": ngay_sinh, "que_quan": que_quan})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # app.run(host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
     
