@@ -20,7 +20,8 @@ from flask_socketio import SocketIO, emit
 # from mtcnn import MTCNN
 from FaceNet.predict import compare_images
 from OCR.ocr import ocr, load_model
-
+import os
+from werkzeug.utils import secure_filename
 
 # Khởi tạo Flask app
 app = Flask(__name__)
@@ -38,11 +39,54 @@ limit_consecutives = 3
 counter_ok_consecutives = 0
 counter_ok_questions = 0
 
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'mp4', 'mov', 'avi', 'mkv'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # Giới hạn file 50MB
+# Tạo thư mục uploads nếu chưa tồn tại
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+def allowed_file(filename):
+    """Kiểm tra định dạng file được phép"""
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/upload', methods=['POST'])
+def upload_video():
+    # Kiểm tra xem request có chứa file không
+    if 'video' not in request.files:
+        return jsonify({'error': 'Không có file video'}), 400
+    file = request.files['video']
+    # Kiểm tra tên file
+    if file.filename == '':
+        return jsonify({'error': 'Không có file được chọn'}), 400
+    # Kiểm tra định dạng file
+    if file and allowed_file(file.filename):
+        # Bảo vệ tên file
+        filename = secure_filename(file.filename)
+        # Tạo đường dẫn lưu file
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        try:
+            # Lưu file
+            file.save(filepath)
+            
+            return jsonify({
+                'message': 'Tải video thành công',
+                'filename': filename,
+                'path': filepath
+            }), 200
+        
+        except Exception as e:
+            return jsonify({
+                'error': 'Lỗi khi lưu file',
+                'details': str(e)
+            }), 500
+    # Định dạng file không được phép
+    return jsonify({'error': 'Định dạng file không được hỗ trợ'}), 400
 # Hàm xử lý yêu cầu liveness detection
 def detect_liveness(im, question):
     global COUNTER, TOTAL, counter_ok_consecutives, counter_ok_questions
     
-    # Các bước xử lý ảnh tương tự như trong mã nguồn
+    
     im = imutils.resize(im, width=720)
     im = cv2.flip(im, 1)
     
@@ -77,20 +121,26 @@ def base64_to_array(base64_img):
         img = base64.b64decode(base64_img)
         image_data = np.frombuffer(img, np.uint8)
         return cv2.imdecode(image_data, cv2.IMREAD_COLOR)
-# API endpoint để kiểm tra liveness
-@app.route('/')
-def index():
-    return "WebSocket server is running!"
-
-# WebSocket event to handle the image upload
-@socketio.on('upload_image')
-def handle_image(data):
-    image_data = data['image']  # Get the base64 image data
-    image = base64.b64decode(image_data)  # Decode the image
-    img = Image.open(BytesIO(image))  # Convert to an image object
-    img.save('uploaded_image.jpg')  # Save the image to a file
-    print("Image uploaded and saved successfully!")
-    emit('response', {'message': 'Image received successfully!'})
+@app.route('/liveness_detection', methods=['POST'])
+def liveness_detection():
+    global COUNTER, TOTAL
+    
+    try:
+        data = request.get_json()
+        if not data or 'image' not in data or 'question' not in data:
+            return jsonify({"error": "Missing image or question"}), 400
+        
+        # Nhận hình ảnh (base64) và câu hỏi từ client
+        question = data['question']
+        image_base64 = data['image']
+        
+        im = base64_to_array(image_base64)
+        
+        result = detect_liveness(im, question)
+        
+        return jsonify({"result": result})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/detect_faces', methods=['POST'])
 def detect_faces():
@@ -156,6 +206,6 @@ def ocr_base64():
     return jsonify({ "CCCD": CCCD,  "ho_ten": ho_ten, "ngay_sinh": ngay_sinh, "que_quan": que_quan})
 
 if __name__ == '__main__':
-    # app.run(host='0.0.0.0', port=5000, debug=True)
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
+    
     
