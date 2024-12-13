@@ -1,9 +1,10 @@
 #download model 
-#gdown --id 1bJCOUyYkgR9j3bsE1upcpHcdMqBUJ9HX 
+#gdown --id 1xYuk8x1rh8xhUYuDYAq-HYp3Jt0DaARG 
 #gdown --id 1eaDJj5DOBQEjiCX9a9uWBijSGS15sXkk 
 # install cuddnn 
-#cp -P lib64/* /usr/local/cuda/lib64/ 
+#cp -P lib/* /usr/local/cuda/lib64/ 
 #cp -P include/* /usr/local/cuda/include/ 
+#chmod a+r /usr/local/cuda/include/cudnn*.h /usr/local/cuda/lib64/libcudnn*
 # install dlib dependence 
 # apt-get update 
 # apt-get install build-essential cmake -y 
