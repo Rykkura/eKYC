@@ -1,5 +1,5 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Button,
     StyleSheet,
@@ -7,56 +7,94 @@ import {
     View,
     Alert,
     TouchableOpacity,
-    TextInput,
 } from "react-native";
-import { manipulateAsync } from "expo-image-manipulator";
+import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_URL = "https://0136-213-173-110-202.ngrok-free.app/ocr";
+const API_URL = "https://78bb-213-173-108-101.ngrok-free.app/ocr";
 
 export default function OCR({ navigation }) {
     const [permission, requestPermission] = useCameraPermissions();
     const [cameraRef, setCameraRef] = useState(null);
     const [waitingForResponse, setWaitingForResponse] = useState(false);
+    const [token, setToken] = useState(null);
+
+    useEffect(() => {
+        const fetchToken = async () => {
+            const storedToken = await AsyncStorage.getItem("jwtToken");
+            setToken(storedToken);
+        };
+        fetchToken();
+    }, []);
 
     const captureAndSendImage = async () => {
         if (cameraRef) {
             try {
                 setWaitingForResponse(true);
-
                 const photo = await cameraRef.takePictureAsync();
-                // const resizedPhoto = await manipulateAsync(
-                //     photo.uri,
-                //     [{ resize: { width: 300 } }], // Resize chiều rộng về 300px, giữ nguyên tỷ lệ
-                //     { compress: 0.7, format: "jpeg" } // Nén ảnh để giảm dung lượng
-                // );
                 const base64 = await FileSystem.readAsStringAsync(photo.uri, {
                     encoding: FileSystem.EncodingType.Base64,
                 });
-
-                // Gửi ảnh đến API
-                const response = await axios.post(`${API_URL}`, {
-                    image1: base64,
-                });
-
-                const data = response.data;
-
-                // Lấy các giá trị từ API và cập nhật vào các trường tương ứng
-                navigation.navigate("OCRInfo", {
-                    cccd: data.CCCD ? data.CCCD[0] : "",
-                    hoTen: data.ho_ten ? data.ho_ten[0] : "",
-                    ngaySinh: data.ngay_sinh ? data.ngay_sinh[0] : "",
-                    queQuan: data.que_quan ? data.que_quan[0] : "",
-                });
-
-                Alert.alert("Kết quả", "Ảnh đã được gửi thành công!");
+                await sendImageToAPI(base64);
             } catch (error) {
                 console.error(error);
                 Alert.alert("Lỗi", "Không thể chụp ảnh và gửi đến API.");
             } finally {
                 setWaitingForResponse(false);
             }
+        }
+    };
+
+    const pickImageFromLibrary = async () => {
+        try {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                base64: true,
+                quality: 1,
+            });
+
+            if (!result.canceled && result.assets.length > 0) {
+                const base64 = result.assets[0].base64;
+                setWaitingForResponse(true);
+                await sendImageToAPI(base64);
+            }
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Lỗi", "Không thể chọn ảnh từ thư viện.");
+        } finally {
+            setWaitingForResponse(false);
+        }
+    };
+
+    const sendImageToAPI = async (base64) => {
+        try {
+            const response = await axios.post(
+                `${API_URL}`,
+                {
+                    image1: base64,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const data = response.data;
+            navigation.navigate("OCRInfoRegister", {
+                cccd: data.CCCD ? data.CCCD[0] : "",
+                hoTen: data.ho_ten ? data.ho_ten[0] : "",
+                ngaySinh: data.ngay_sinh ? data.ngay_sinh[0] : "",
+                queQuan: data.que_quan ? data.que_quan[0] : "",
+            });
+
+            
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Lỗi", "Không thể tải ảnh.");
         }
     };
 
@@ -90,6 +128,13 @@ export default function OCR({ navigation }) {
             >
                 <Text style={styles.buttonText}>Chụp</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+                style={[styles.captureButton, styles.uploadButton]}
+                onPress={pickImageFromLibrary}
+                disabled={waitingForResponse}
+            >
+                <Text style={styles.buttonText}>Chọn ảnh</Text>
+            </TouchableOpacity>
         </View>
     );
 }
@@ -120,22 +165,15 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         alignItems: "center",
         width: 200,
-        marginBottom: 20,
+        marginBottom: 10,
+    },
+    uploadButton: {
+        backgroundColor: "#34C759",
+        alignItems: "center",
     },
     buttonText: {
         color: "#fff",
         fontSize: 18,
         fontWeight: "bold",
-    },
-    inputContainer: {
-        width: "80%",
-    },
-    input: {
-        height: 40,
-        borderColor: "#ccc",
-        borderWidth: 1,
-        borderRadius: 5,
-        marginBottom: 10,
-        paddingHorizontal: 10,
     },
 });

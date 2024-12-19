@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { TextInput, Button, Card } from "react-native-paper";
 import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = "http://192.168.0.103:8000/login";
+const API_URL = "http://192.168.0.102:8000/login";
 
 export default function LoginScreen({ navigation }) {
     const [username, setUsername] = useState("");
@@ -15,9 +16,10 @@ export default function LoginScreen({ navigation }) {
                 username,
                 password,
             });
-
+            // const { token } = response.data;
+            // await AsyncStorage.setItem("token", token); 
             // Điều hướng đến màn hình kiểm tra liveness sau khi đăng nhập thành công
-            navigation.navigate("OCR");
+            navigation.navigate("Transfer");    
         } catch (error) {
             alert(error.response?.data?.message || "Lỗi hệ thống");
         }
@@ -49,7 +51,7 @@ export default function LoginScreen({ navigation }) {
                         Đăng nhập
                     </Button>
                     <Button
-                        onPress={() => navigation.navigate("Register")}
+                        onPress={() => navigation.navigate("RegisterScreen")}
                         style={styles.button}
                     >
                         Đăng ký

@@ -11,3 +11,8 @@ expo install expo-permissions
 expo install expo-camera
 
 npx expo install expo-sensors
+
+
+
+
+

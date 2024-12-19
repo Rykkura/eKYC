@@ -76,7 +76,7 @@
 //                     >
 //                         Đăng ký
 //                     </Button>
-
+                    
 //                 </Card.Content>
 //             </Card>
 //         </View>
@@ -90,11 +90,12 @@
 //     button: { marginTop: 10 },
 // });
 
+
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { TextInput, Button, Card } from "react-native-paper";
 import axios from "axios";
-import { useAuth } from "./Context"; // Import Context
+import { useAuth } from "../Context"; // Import Context
 
 const API_URL = "http://192.168.0.102:8000/register";
 
@@ -162,9 +163,7 @@ export default function RegisterScreen({ navigation }) {
                     />
                     <Button
                         mode="contained"
-                        onPress={() => {
-                            navigation.navigate("OCRRegister");
-                        }}
+                        onPress={register}
                         style={styles.button}
                     >
                         Đăng ký
@@ -181,3 +180,4 @@ const styles = StyleSheet.create({
     input: { marginBottom: 16 },
     button: { marginTop: 10 },
 });
+

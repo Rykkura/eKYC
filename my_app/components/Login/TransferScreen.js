@@ -32,7 +32,7 @@ export default function TransferScreen({ navigation }) {
     const transfer = () => {
         if (accountNumber && bank && recipientName && amount) {
             if (parseFloat(amount) >= 10000000) {
-                navigation.navigate("Liveness");
+                navigation.navigate("FaceVerification");
             } else {
                 alert(
                     `Chuyển thành công ${amount} đến ${recipientName} tại ${bank}`

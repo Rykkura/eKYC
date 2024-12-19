@@ -22,6 +22,10 @@
       ]
     ],
     "ios": {
+      "infoPlist": {
+        "NSCameraUsageDescription": "Ứng dụng này cần quyền truy cập camera để quay video.",
+        "NSMicrophoneUsageDescription": "Ứng dụng này cần quyền truy cập microphone để ghi âm."
+      },
       "supportsTablet": true
     },
     "android": {
