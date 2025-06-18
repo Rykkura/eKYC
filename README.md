@@ -1,0 +1,1 @@
+This repository is about eKYC, including face recognition, liveness detection, and OCR for ID cards. It provides a security-focused pipeline for banking apps in particular, and for high-security applications in general. The repository also includes a simple demo built with React Native showcasing a money transfer application integrated with eKYC.
